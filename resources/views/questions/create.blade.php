@@ -1,50 +1,23 @@
 <x-app-layout>
-    <x-auth-session-status class="mb-4" :status="session('status')" />
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- JSON Upload Section -->
-        <div class="mb-12 p-6 bg-white rounded-lg shadow">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Import Questions from JSON</h2>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        <!-- Success Message -->
+        <x-auth-session-status class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mx-auto max-w-2xl" :status="session('status')" />
+
+        <!-- Single Question Form -->
+        <div class="bg-white rounded-xl shadow-sm p-8 max-w-2xl mx-auto">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Create New FAQ Entry</h2>
             
-            <form method="POST" action="{{ route('questions.import') }}" enctype="multipart/form-data" class="space-y-4">
+            <form method="POST" action="{{ route('questions.store') }}" class="space-y-6">
                 @csrf
 
+                <!-- Category -->
                 <div>
-                    <x-input-label for="json_file" :value="__('JSON File')" />
-                    <input type="file" name="json_file" id="json_file" 
-                        class="block mt-1 w-full text-sm text-gray-600
-                            file:mr-4 file:py-2 file:px-4
-                            file:rounded-md file:border-0
-                            file:text-sm file:font-semibold
-                            file:bg-indigo-50 file:text-indigo-700
-                            hover:file:bg-indigo-100"
-                        accept="application/json" required
-                    >
-                    <x-input-error :messages="$errors->get('json_file')" class="mt-2" />
-                    <x-input-error :messages="$errors->get('json_errors')" class="mt-2" />
-                    <p class="mt-2 text-sm text-gray-500">
-                        Upload a JSON file following the required format. Max 5MB.
-                    </p>
-                </div>
-
-                <x-primary-button>
-                    {{ __('Import Questions') }}
-                </x-primary-button>
-            </form>
-        </div>
-    <form method="POST" action="{{ route('questions.store') }}" class="max-w-2xl mx-auto p-6">
-        @csrf
-    
-        <h2 class="text-2xl font-semibold text-gray-800 mb-6">Create New FAQ Entry</h2>
-    
-        <div class="bg-white p-6 rounded-lg shadow-sm mb-6">
-            <!-- Category -->
-            <div class="mt-4">
-                <x-input-label for="category" :value="__('Category')" />
-                <select id="category" name="category" required
-                    class="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                    <option value="">Select a Category</option>
-                    @foreach([
-                        'Informations Générales sur l\'Établissement',
+                    <x-input-label for="category" :value="__('Category')" class="font-medium text-gray-700" />
+                    <select id="category" name="category" required
+                        class="mt-2 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2.5 px-4">
+                        <option value="">Select a Category</option>
+                        @foreach([
+                            'Informations Générales sur l\'Établissement',
                         'Programmes et Cours',
                         'Admission et Inscription',
                         'Vie Étudiante',
@@ -59,42 +32,87 @@
                         'Professeurs et Encadrement',
                         'Clubs Étudiants et Associations',
                         'Services Administratifs et Carte Étudiante'
-                    ] as $category)
-                        <option value="{{ $category }}" {{ old('category') == $category ? 'selected' : '' }}>
-                            {{ $category }}
-                        </option>
-                    @endforeach
-                </select>
-                <x-input-error :messages="$errors->get('category')" class="mt-2" />
-            </div>
-    
-            <!-- Question -->
-            <div class="mt-4">
-                <x-input-label for="question" :value="__('Question')" />
-                <x-text-input id="question" class="block mt-1 w-full" 
-                    type="text" 
-                    name="question" 
-                    :value="old('question')" 
-                    required />
-                <x-input-error :messages="$errors->get('question')" class="mt-2" />
-            </div>
-    
-            <!-- Answer -->
-            <div class="mt-4">
-                <x-input-label for="answer" :value="__('Answer')" />
-                <textarea id="answer" 
-                    name="answer"
-                    required
-                    class="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('answer') }}</textarea>
-                <x-input-error :messages="$errors->get('answer')" class="mt-2" />
-            </div>
+                        ] as $category)
+                            <option value="{{ $category }}" {{ old('category') == $category ? 'selected' : '' }}>
+                                {{ $category }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <x-input-error :messages="$errors->get('category')" class="mt-2" />
+                </div>
+
+                <!-- Question -->
+                <div>
+                    <x-input-label for="question" :value="__('Question')" class="font-medium text-gray-700" />
+                    <x-text-input id="question" 
+                        type="text" 
+                        name="question" 
+                        :value="old('question')" 
+                        class="mt-2 block w-full py-2.5 px-4"
+                        required />
+                    <x-input-error :messages="$errors->get('question')" class="mt-2" />
+                </div>
+
+                <!-- Answer -->
+                <div>
+                    <x-input-label for="answer" :value="__('Answer')" class="font-medium text-gray-700" />
+                    <textarea id="answer" 
+                        name="answer"
+                        required
+                        rows="4"
+                        class="mt-2 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 py-2.5 px-4">{{ old('answer') }}</textarea>
+                    <x-input-error :messages="$errors->get('answer')" class="mt-2" />
+                </div>
+
+                <div class="flex justify-end">
+                    <x-primary-button class="px-6 py-3 text-base">
+                        {{ __('Create Question') }}
+                    </x-primary-button>
+                </div>
+            </form>
         </div>
-    
-        <div class="flex items-center justify-end mt-6">
-            <x-primary-button>
-                {{ __('Create Question') }}
-            </x-primary-button>
+
+        <!-- JSON Upload Section -->
+        <div class="bg-white rounded-xl shadow-sm p-8 max-w-2xl mx-auto">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Import Questions from JSON</h2>
+            
+            <form method="POST" action="{{ route('questions.import') }}" enctype="multipart/form-data" class="space-y-6">
+                @csrf
+
+                <div>
+                    <x-input-label for="json_file" :value="__('JSON File Upload')" class="font-medium text-gray-700" />
+                    <div class="mt-2">
+                        <label class="flex flex-col items-center justify-center w-full p-8 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-indigo-500 transition-colors ">
+                            <div class="space-y-1 text-center cursor-pointer">
+                                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                </svg>
+                                <div class="text-sm text-gray-600 cursor-pointer">
+                                    <span class="font-semibold text-indigo-600">Click to upload</span>
+                                    <span class="ml-1">or drag and drop</span>
+                                </div>
+                                <p class="text-xs text-gray-500">JSON files only, max 5MB</p>
+                            </div>
+                            <input 
+                                type="file" 
+                                name="json_file" 
+                                id="json_file" 
+                                class="hidden"
+                                accept="application/json" 
+                                required
+                            >
+                        </label>
+                    </div>
+                    <x-input-error :messages="$errors->get('json_file')" class="mt-2" />
+                    <x-input-error :messages="$errors->get('json_errors')" class="mt-2" />
+                </div>
+
+                <div class="flex justify-end">
+                    <x-primary-button class="px-6 py-3 text-base">
+                        {{ __('Import Questions') }}
+                    </x-primary-button>
+                </div>
+            </form>
         </div>
-    </form>
     </div>
 </x-app-layout>

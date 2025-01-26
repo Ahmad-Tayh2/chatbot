@@ -119,4 +119,14 @@ class QuestionController extends Controller
             return redirect()->back()->withErrors(['json_file' => 'Error processing file: ' . $e->getMessage()]);
         }
     }
+
+    public function destroy(Question $question)
+    {
+        try {
+            $question->delete();
+            return redirect()->back()->with('status', 'Question deleted successfully!');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => 'Failed to delete question.']);
+        }
+    }
 }

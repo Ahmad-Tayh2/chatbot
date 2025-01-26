@@ -24,6 +24,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/questions', [QuestionController::class, 'store'])->name('questions.store');
     Route::post('/questions/import', [QuestionController::class, 'import'])->name('questions.import');
     Route::get('/questions', [QuestionController::class, 'index'])->name('questions.index');
+    Route::delete('/questions/{question}', [QuestionController::class, 'destroy'])->name('questions.destroy');
 });
 
 require __DIR__.'/auth.php';

@@ -25,28 +25,43 @@
       <div class="bg-white rounded-lg shadow">
           @forelse($questions as $category => $items)
               <div class="border-b last:border-b-0">
-                  <h2 class="p-6 text-xl font-semibold bg-gray-50 text-gray-800">
+                  <h2 class="p-6 text-xl font-semibold bg-gray-200 text-gray-800">
                       {{ $category }}
                   </h2>
                   
                   <div class="divide-y">
                       @foreach($items as $question)
                           <div x-data="{ open: false }" class="group">
-                              <button 
-                                  @click="open = !open"
-                                  class="w-full px-6 py-4 text-left hover:bg-gray-50 flex justify-between items-center"
-                              >
-                                  <span class="text-gray-700">{{ $question->question }}</span>
-                                  <svg 
-                                      class="w-5 h-5 transform transition-transform"
-                                      :class="{ 'rotate-180': open }" 
-                                      fill="none" 
-                                      stroke="currentColor" 
-                                      viewBox="0 0 24 24"
+                              <div class="flex items-center justify-between w-full px-6 py-4 text-left hover:bg-gray-100">
+                                  <button 
+                                      @click="open = !open"
+                                      class="flex-1 flex justify-between items-center"
                                   >
-                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                  </svg>
-                              </button>
+                                      <span class="text-gray-700">{{ $question->question }}</span>
+                                      <svg 
+                                          class="w-5 h-5 transform transition-transform ml-4"
+                                          :class="{ 'rotate-180': open }" 
+                                          fill="none" 
+                                          stroke="currentColor" 
+                                          viewBox="0 0 24 24"
+                                      >
+                                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                      </svg>
+                                  </button>
+                                  <form 
+                                      method="POST" 
+                                      action="{{ route('questions.destroy', $question->id) }}"
+                                      onsubmit="return confirm('Are you sure you want to delete this question?')"
+                                  >
+                                      @csrf
+                                      @method('DELETE')
+                                      <button type="submit" class="ml-4 text-red-600 hover:text-red-800">
+                                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                          </svg>
+                                      </button>
+                                  </form>
+                              </div>
                               
                               <div x-show="open" x-collapse class="px-6 pb-4 pt-2 bg-gray-50">
                                   <div class="prose max-w-none text-gray-600">
